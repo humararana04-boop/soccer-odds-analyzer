@@ -123,10 +123,10 @@ if uploaded_file is not None:
     with st.spinner("Processing data and applying AI models... Please wait."):
         cleaned_data, summary_metrics, league_analysis = process_data(uploaded_file, z_threshold, sig_move_pct)
         
-    if cleaned_data is stroke = None:
+    if cleaned_data is not None:
         st.success("✅ System Processed Data Successfully!")
         
-        # Layout Layout Tabs
+        # Layout Tabs
         tab1, tab2, tab3, tab4 = st.tabs(["📊 Summary Metrics", "📈 Live Odds Visualizer", "🌍 League Deviations", "📋 Methodology & Download"])
         
         # TAB 1: SUMMARY METRICS
@@ -137,7 +137,6 @@ if uploaded_file is not None:
         # TAB 2: INTERACTIVE VISUALIZATION
         with tab2:
             st.subheader("Minute-by-Minute Timeline Chart")
-            # Filter selectors for client to drill down
             available_matches = cleaned_data['fixture_id'].unique()
             selected_fix = st.selectbox("Select a Match / Fixture ID:", available_matches)
             
@@ -149,7 +148,7 @@ if uploaded_file is not None:
             
             chart_df = match_df[match_df['selection'] == selected_sel].sort_values('mins_before_kickoff', ascending=False)
             
-            # Interactive Line Plotly Graph
+            # Interactive Line Graph
             fig = px.line(
                 chart_df, 
                 x="mins_before_kickoff", 
@@ -182,7 +181,6 @@ if uploaded_file is not None:
             st.subheader("📥 Download Refreshed Workbook")
             st.write("Click the button below to download the fully annotated data containing all custom metrics and AI flags for your offline use.")
             
-            # Create Excel file in memory for clean download
             buffer = io.BytesIO()
             with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
                 cleaned_data.to_excel(writer, sheet_name="Cleaned & AI Flagged", index=False)
